@@ -84,7 +84,7 @@ def get_house(update, context, db):
     text3 = "Thank you for registering for RC4's Humans Vs Zombies event. These are your details:\n\nFull Name: " + full_name + "\nUsername: " + username + "\nHouse: " + house + "\nCode: " + code + "\nRole: " + role
     text4 = "Sorry, there have been some issues with your registration. Please contact the administrators! Press /start to initialize new details."
 
-    if (db.insert_user(full_name, username, house, chat_id, code, is_human, 0)):
+    if (db.insert_user(full_name, username, house, chat_id, code, is_human, 0, telegram_handle)):
         update.message.reply_text(text)
         update.message.reply_text(text2)
         update.message.reply_text(text3)

@@ -5,6 +5,7 @@ import codesubmit
 import leaderboard
 import instructions
 import accountdetails
+import usertable
 from telegram.ext import *
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ParseMode, ReplyKeyboardMarkup, KeyboardButton, Message, Bot, ReplyKeyboardRemove
 from functools import partial
@@ -70,6 +71,7 @@ def main():
     dp.add_handler(CallbackQueryHandler(partial(accountdetails.show_details, db=db), pattern="account_details"))
 
     dp.add_handler(CallbackQueryHandler(show_back_home, pattern="return_menu"))
+
 
     updater.start_polling()
     updater.idle()

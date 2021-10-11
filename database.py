@@ -37,7 +37,7 @@ class Database:
     def create_tables(self):
         try:
             self.cur.execute(
-                '''CREATE TABLE users(full_name text, username text, house text, telegram_id text, code text, is_human text, points integer)''')
+                '''CREATE TABLE users(full_name text, username text, house text, telegram_id text, code text, is_human text, points integer, telegram_handle text)''')
             self.cur.execute(
                 '''CREATE TABLE code_submissions(code1 text, code2 text)''')
             self.con.commit()
@@ -108,7 +108,7 @@ class Database:
             print(e)
             return e
             
-    def insert_user(self, full_name, username, house, telegram_id, code, is_human, points):
+    def insert_user(self, full_name, username, house, telegram_id, code, is_human, points, telegram_handle):
         try:
 
             # ## if telegram_id registered before, delete and insert
@@ -123,8 +123,8 @@ class Database:
             #     self.cur.execute("UPDATE events_joined SET username=? WHERE telegram_id=?", (username, telegram_id))
             #     # self.cur.execute("UPDATE user_feedback SET username=? WHERE telegram_id=?", (username, telegram_id))
 
-            self.cur.execute("INSERT INTO users(full_name, username, house, telegram_id, code, is_human, points) VALUES(?,?,?,?,?,?,?)",
-                             (full_name, username, house, telegram_id, code, is_human, points,))
+            self.cur.execute("INSERT INTO users(full_name, username, house, telegram_id, code, is_human, points, telegram_handle) VALUES(?,?,?,?,?,?,?,?)",
+                             (full_name, username, house, telegram_id, code, is_human, points, telegram_handle))
             self.con.commit()
             return True
         except Exception as e:
