@@ -24,27 +24,18 @@ def query(update, context):
     return 1
 
 
-def get_table(update, context, db):
+def insert_admin(update, context, db):
     chat_id = update.message.chat.id
     user_input = update.message.text
 
-    db.insert_admin(chat_id)
-
-    if (user_input != "zombiesrule"):
+    if (user_input != "humansrule"):
         update.message.reply_text(
             text = "Sorry, invalid password. Please key in again."
         )
         return 1
 
-    text = "Following are the users full name, username, role, telegram handle and points. \n\n"
-
-    userbase = db.query_all_users()
-    for user in userbase:
-        if (user[IS_HUMAN] == '1'):
-            role = "Human"
-        else:
-            role = "Zombie"
-        text += user[FULL_NAME] + " " + user[USERNAME] + " " + role + " " + user[TELEGRAM_HANDLE] + " " + str(user[POINTS]) + "\n"
+    db.insert_admin(chat_id)
+    text = "Admin added!"
 
     update.message.reply_text(text)
 

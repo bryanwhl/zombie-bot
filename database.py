@@ -40,6 +40,8 @@ class Database:
                 '''CREATE TABLE users(full_name text, username text, house text, telegram_id text, code text, is_human text, points integer, telegram_handle text)''')
             self.cur.execute(
                 '''CREATE TABLE code_submissions(code1 text, code2 text)''')
+            self.cur.execute(
+                '''CREATE TABLE admins(telegram_id text)''')
             self.con.commit()
             return True
         except Exception as e:
@@ -169,6 +171,7 @@ class Database:
         # 0 - code does not exist
         try:
             token = keys.API_KEY
+            token_admin = keys.API_KEY_ADMIN
 
             # submit code
             self.cur.execute("SELECT * from users WHERE telegram_id=?", (telegram_id,))
@@ -178,6 +181,7 @@ class Database:
             p1_username = user_details[USERNAME]
             p1_telegram_id = user_details[TELEGRAM_ID]
             p1_code = user_details[CODE]
+            p1_full_name = user_details[FULL_NAME]
             
             # give code
             self.cur.execute("SELECT * from users WHERE code=?", (code,))
@@ -190,6 +194,7 @@ class Database:
             p2_username = user_details[USERNAME]
             p2_telegram_id = user_details[TELEGRAM_ID]
             p2_code = user_details[CODE]
+            p2_full_name = user_details[FULL_NAME]            
 
             if (p1_telegram_id == p2_telegram_id):
                 return -1
@@ -214,12 +219,22 @@ class Database:
             self.cur.execute("INSERT INTO code_submissions(code1, code2) VALUES(?,?)", (p1_code, p2_code))
             self.con.commit()
 
+
+            self.cur.execute("SELECT * from admins")
+            rows = self.cur.fetchall()
+            message = p1_full_name + " submitted " + p2_full_name + "'s code."
+            for row in rows:
+                url_req = "https://api.telegram.org/bot" + token_admin + "/sendMessage" + "?chat_id=" + row[0] + "&text=" + message 
+                results = requests.get(url_req)
+
             # human submit human
             if (p1_role == '1' and p2_role == '1'): 
                 p1_points += 5
                 p2_points += 5
                 self.cur.execute("UPDATE users SET points=? WHERE telegram_id=?", (p1_points, p1_telegram_id))
+                self.con.commit()
                 self.cur.execute("UPDATE users SET points=? WHERE telegram_id=?", (p2_points, p2_telegram_id))
+                self.con.commit()
 
                 # send message to player 2
                 message = "Your fellow human, " + p1_username + ", have submitted your code. Added 5 points."
@@ -232,8 +247,11 @@ class Database:
                 p1_points = 0
                 p2_points += 10
                 self.cur.execute("UPDATE users SET points=? WHERE telegram_id=?", (p1_points, p1_telegram_id))
+                self.con.commit()
                 self.cur.execute("UPDATE users SET is_human=? WHERE telegram_id=?", (p2_role, p1_telegram_id))
+                self.con.commit()
                 self.cur.execute("UPDATE users SET points=? WHERE telegram_id=?", (p2_points, p2_telegram_id))
+                self.con.commit()
 
                 # send message to player 2
                 message = "Nice work tricking " + p1_username + "! Added 10 points."
@@ -246,8 +264,11 @@ class Database:
                 p1_points += 10
                 p2_points = 0
                 self.cur.execute("UPDATE users SET points=? WHERE telegram_id=?", (p1_points, p1_telegram_id))
+                self.con.commit()
                 self.cur.execute("UPDATE users SET points=? WHERE telegram_id=?", (p2_points, p2_telegram_id))
+                self.con.commit()
                 self.cur.execute("UPDATE users SET is_human=? WHERE telegram_id=?", (p1_role, p2_telegram_id))
+                self.con.commit()
 
                 # send message to player 2
                 message = "Yikes! You have been zombified by " + p1_username + ". Welcome to the evil side. Your points have been resetted."
@@ -304,6 +325,31 @@ class Database:
                 arrayString.append(rows[i][USERNAME])
             return arrayString
 
+        except Exception as e:
+            print(e)
+            return e
+
+    def insert_admin(self, telegram_id):
+        try:
+            self.cur.execute("SELECT * FROM admins WHERE telegram_id=?", (telegram_id,))
+            if (len(self.cur.fetchall())):
+                return
+            self.cur.execute("INSERT INTO admins(telegram_id) VALUES(?)", (telegram_id,))
+            self.con.commit()
+            return
+        
+        except Exception as e:
+            print(e)
+            return e
+
+    def query_all_admins(self):
+        try:
+            self.cur.execute("SELECT * from admins")
+            rows = self.cur.fetchall()
+            arrayString = []
+            for row in rows:
+                arrayString.append(row)
+            return arrayString[0][0]
         except Exception as e:
             print(e)
             return e

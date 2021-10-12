@@ -60,16 +60,24 @@ print("Expected: Top 2")
 print(testDatabase.query_top_usernames(2))
 print("==========================")
 
+# # Test admins table
+# print("Expected: 1 user")
+# testDatabase.insert_admin("1157634500")
+# testDatabase.insert_admin("1157634501")
+# testDatabase.insert_admin("1157634502")
+# print(testDatabase.query_all_admins())
+
 # ## Submit code
 # print("Human submit human code")
-# print(testDatabase.submit_code("1157634501", "submit_code2"))
+# print(testDatabase.submit_code("1157634501", "submit_code1"))
 # print("Expected: 5 points")
-# print(testDatabase.query_user("1157634501"))
+# print(testDatabase.query_user("1157634502"))
 # print("==========================")
 
 # # Ensuring code_submissions table work
 # print("Expected: 1 pair of codes")
 # print(testDatabase.query_code_submissions_table())
 # print("==========================")
+
 
 

@@ -4,6 +4,7 @@ from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ParseMode, Repl
 from functools import partial
 from database import Database
 import usertable
+import add_admin
 
 db = Database()
 # db.create_tables()
@@ -18,6 +19,18 @@ def main():
             entry_points=[CommandHandler("usertable", usertable.query)],
             states={
                 1: [MessageHandler(Filters.text, partial(usertable.get_table, db=db))],
+            },
+            fallbacks=[],
+            per_user=False
+        )
+    )
+
+    # add admin
+    dp.add_handler(
+        ConversationHandler(
+            entry_points=[CommandHandler("receivenotif", add_admin.query)],
+            states={
+                1: [MessageHandler(Filters.text, partial(add_admin.insert_admin, db=db))],
             },
             fallbacks=[],
             per_user=False
