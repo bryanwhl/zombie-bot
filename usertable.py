@@ -44,7 +44,7 @@ def get_table(update, context, db):
             role = "Human"
         else:
             role = "Zombie"
-        text += user[FULL_NAME] + " " + user[USERNAME] + " " + role + " " + user[TELEGRAM_HANDLE] + " " + str(user[POINTS]) + "\n"
+        text += user[FULL_NAME] + ", " + user[USERNAME] + ", " + role + ", " + user[TELEGRAM_HANDLE] + ", " + str(user[POINTS]) + "\n"
 
     update.message.reply_text(text)
 

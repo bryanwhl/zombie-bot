@@ -102,7 +102,7 @@ class Database:
             self.cur.execute("SELECT * FROM users WHERE is_human=? AND house=?", (0, house))
             no_zombies = len(self.cur.fetchall())
             # return 1
-            if (no_zombies * 5 > no_humans):
+            if (no_zombies * 95 > no_humans * 5):
                 return 1
             else:
                 return 0
@@ -177,11 +177,15 @@ class Database:
             self.cur.execute("SELECT * from users WHERE telegram_id=?", (telegram_id,))
             user_details = self.cur.fetchall()[0]
             p1_role = user_details[IS_HUMAN]
+            if (p1_role == '1'):
+                p1_role_str = "Human"
+            else:
+                p1_role_str = "Zombie"
             p1_points = user_details[POINTS]
             p1_username = user_details[USERNAME]
             p1_telegram_id = user_details[TELEGRAM_ID]
             p1_code = user_details[CODE]
-            p1_full_name = user_details[FULL_NAME]
+            p1_house = user_details[HOUSE]
             
             # give code
             self.cur.execute("SELECT * from users WHERE code=?", (code,))
@@ -190,11 +194,15 @@ class Database:
                 return 0
             user_details = array[0]
             p2_role = user_details[IS_HUMAN]
+            if (p2_role == '1'):
+                p2_role_str = "Human"
+            else:
+                p2_role_str = "Zombie"
             p2_points = user_details[POINTS]
             p2_username = user_details[USERNAME]
             p2_telegram_id = user_details[TELEGRAM_ID]
             p2_code = user_details[CODE]
-            p2_full_name = user_details[FULL_NAME]            
+            p2_house = user_details[HOUSE]           
 
             if (p1_telegram_id == p2_telegram_id):
                 return -1
@@ -222,15 +230,19 @@ class Database:
 
             self.cur.execute("SELECT * from admins")
             rows = self.cur.fetchall()
-            message = p1_full_name + " submitted " + p2_full_name + "'s code."
+            message = p1_username + " (" + p1_house + ", " + p1_role_str +  ")" + " submitted " + p2_username + "'s" + " (" + p2_house + ", " + p2_role_str + ") " + "code."
             for row in rows:
                 url_req = "https://api.telegram.org/bot" + token_admin + "/sendMessage" + "?chat_id=" + row[0] + "&text=" + message 
                 results = requests.get(url_req)
 
             # human submit human
-            if (p1_role == '1' and p2_role == '1'): 
-                p1_points += 5
-                p2_points += 5
+            if (p1_role == '1' and p2_role == '1'):
+                if (p1_house != p2_house):
+                    p1_points += 20
+                    p2_points += 20
+                else: 
+                    p1_points += 10
+                    p2_points += 10
                 self.cur.execute("UPDATE users SET points=? WHERE telegram_id=?", (p1_points, p1_telegram_id))
                 self.con.commit()
                 self.cur.execute("UPDATE users SET points=? WHERE telegram_id=?", (p2_points, p2_telegram_id))
@@ -244,8 +256,11 @@ class Database:
 
             # human submit zombie
             if (p1_role == '1' and p2_role == '0'):
+                if (p1_house != p2_house):
+                    p2_points += 20
+                else:
+                    p2_points += 10
                 p1_points = 0
-                p2_points += 10
                 self.cur.execute("UPDATE users SET points=? WHERE telegram_id=?", (p1_points, p1_telegram_id))
                 self.con.commit()
                 self.cur.execute("UPDATE users SET is_human=? WHERE telegram_id=?", (p2_role, p1_telegram_id))
@@ -261,7 +276,10 @@ class Database:
 
             # zombie submit human
             if (p1_role == '0' and p2_role == '1'):
-                p1_points += 10
+                if (p1_house != p2_house):
+                    p1_points += 20
+                else:
+                    p1_points += 10
                 p2_points = 0
                 self.cur.execute("UPDATE users SET points=? WHERE telegram_id=?", (p1_points, p1_telegram_id))
                 self.con.commit()
@@ -278,6 +296,13 @@ class Database:
 
             # zombie submit zombie
             if (p1_role == '0' and p2_role == '0'):
+                p1_points -= 10
+                p2_points -= 10
+                self.cur.execute("UPDATE users SET points=? WHERE telegram_id=?", (p1_points, p1_telegram_id))
+                self.con.commit()
+                self.cur.execute("UPDATE users SET points=? WHERE telegram_id=?", (p2_points, p2_telegram_id))
+                self.con.commit()
+
                 return 4
 
         except Exception as e:
@@ -324,6 +349,22 @@ class Database:
             for i in range(number):
                 arrayString.append(rows[i][USERNAME])
             return arrayString
+
+        except Exception as e:
+            print(e)
+            return e
+
+    def query_house_points(self, house):
+        try:
+            self.cur.execute("SELECT * FROM users WHERE house=?", (house,))
+            rows = self.cur.fetchall()
+            number_people = len(rows)
+            if (number_people == 0):
+                return 0
+            total_points = 0
+            for row in rows:
+                total_points += row[POINTS]
+            return int(total_points/number_people)
 
         except Exception as e:
             print(e)

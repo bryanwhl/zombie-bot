@@ -15,6 +15,14 @@ def show_leaderboard(update, context, db):
 
     for idx, val in enumerate(top_10_names):
         text += str(idx+1) + ". " + val + "\n"
+
+    aquila_points = db.query_house_points("Aquila")
+    noctua_points = db.query_house_points("Noctua")
+    draco_points = db.query_house_points("Draco")
+    leo_points = db.query_house_points("Leo")
+    ursa_points = db.query_house_points("Ursa")
+
+    text += "\nHouse Average Points:" + "\nAquila: " + str(aquila_points) + "\nNoctua: " + str(noctua_points) + "\nDraco: " + str(draco_points) + "\nLeo: " + str(leo_points) + "\nUrsa: " + str(ursa_points)
     
     context.bot.edit_message_text(
         chat_id=chat_id,

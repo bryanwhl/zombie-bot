@@ -10,12 +10,21 @@ from telegram.ext import *
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ParseMode, ReplyKeyboardMarkup, KeyboardButton, Message, Bot, ReplyKeyboardRemove
 from functools import partial
 from database import Database
+from datetime import datetime
+from datetime import date
 
 db = Database()
 #db.create_tables()
 
 def show_home(update, context):
     chat_id = update.message.chat.id
+
+    today = datetime.today()
+    timestart = datetime.strptime("20/10/2021 08:00", "%d/%m/%Y %H:%M")
+    if (today < timestart):
+        text = "Game have not started! Game only starts on 20 Oct 8am."
+        update.message.reply_text(text)
+        return ConversationHandler.END
 
     if not (db.telegram_id_exist(chat_id)):
         text = "You did not register for the game! If this is an error, please contact our administrators."
@@ -49,7 +58,7 @@ def main():
     dp = updater.dispatcher
 
     # /start
-    dp.add_handler(CommandHandler("start", show_home))
+    dp.add_handler(CommandHandler("startgame", show_home))
 
     # submit code
     dp.add_handler(ConversationHandler(
