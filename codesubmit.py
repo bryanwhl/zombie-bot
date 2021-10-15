@@ -44,13 +44,13 @@ def confirmed(update, context, db):
 
     # Check for conditional here
     if (result == 1): ## human submit human
-        text = "Congratulations! You found a fellow survivor."
+        text = "Congratulations! You found a fellow survivor. Points added."
     elif (result == 2): ## human submit zombie
         text = "You have been zombified! You are now a zombie with 0 points."        
     elif (result == 3): ## zombie submit human
-        text = "GRRRR! You have zombified a human..."
+        text = "GRRRR! You have zombified a human... Points added."
     elif (result == 4): ## zombie submit zombie
-        text = "Wrong target! You submitted a fellow zombie's code."
+        text = "Wrong target! You submitted a fellow zombie's code. Minus 10 points!"
 
     text2 = "Welcome back! Please select an option:"
     update.message.reply_text(text)

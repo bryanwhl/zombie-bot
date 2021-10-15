@@ -21,7 +21,6 @@ def start(update, context, db):
         update.message.reply_text(text = "Sorry! You have signed up before. Please contact the administrators if this is an error.")
         return ConversationHandler.END
 
-
     text = "Hi @" + username + "! Let's get you started!"
     text2 = "May I know your name (full name on matric card)?"
 
@@ -44,7 +43,7 @@ def get_name(update, context, db):
     context.user_data["full_name"] = user_input
 
     text = "Your name " + user_input + " has been registered."
-    text2 = "Please enter an anonymous username you would like to play with! (e.g. troller1234)"
+    text2 = "Please enter a username you would like to play with! (e.g. troller1234)"
 
     update.message.reply_text(text)
     update.message.reply_text(text2)

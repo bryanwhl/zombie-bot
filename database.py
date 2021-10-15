@@ -51,7 +51,8 @@ class Database:
     def full_name_exist(self, full_name):
         try:
             self.cur.execute("SELECT * FROM users WHERE full_name=?", (full_name,))
-            if (len(self.cur.fetchall())):
+            rows = self.cur.fetchall()
+            if (len(rows)):
                 return True
             return False
 
@@ -62,7 +63,8 @@ class Database:
     def username_exist(self, username):
         try:
             self.cur.execute("SELECT * FROM users WHERE username=?", (username,))
-            if (len(self.cur.fetchall())):
+            rows = self.cur.fetchall()
+            if (len(rows)):
                 return True
             return False
             
@@ -124,6 +126,8 @@ class Database:
             #     ## update details of user
             #     self.cur.execute("UPDATE events_joined SET username=? WHERE telegram_id=?", (username, telegram_id))
             #     # self.cur.execute("UPDATE user_feedback SET username=? WHERE telegram_id=?", (username, telegram_id))
+            self.cur.execute("DELETE FROM users WHERE telegram_id=?", (telegram_id,))
+            self.con.commit()
 
             self.cur.execute("INSERT INTO users(full_name, username, house, telegram_id, code, is_human, points, telegram_handle) VALUES(?,?,?,?,?,?,?,?)",
                              (full_name, username, house, telegram_id, code, is_human, points, telegram_handle))
@@ -249,7 +253,7 @@ class Database:
                 self.con.commit()
 
                 # send message to player 2
-                message = "Your fellow human, " + p1_username + ", have submitted your code. Added 5 points."
+                message = "Your fellow human, " + p1_username + ", have submitted your code. Points added!"
                 url_req = "https://api.telegram.org/bot" + token + "/sendMessage" + "?chat_id=" + str(p2_telegram_id) + "&text=" + message 
                 results = requests.get(url_req)
                 return 1
@@ -269,7 +273,7 @@ class Database:
                 self.con.commit()
 
                 # send message to player 2
-                message = "Nice work tricking " + p1_username + "! Added 10 points."
+                message = "Nice work tricking " + p1_username + "! Points added!"
                 url_req = "https://api.telegram.org/bot" + token + "/sendMessage" + "?chat_id=" + str(p2_telegram_id) + "&text=" + message 
                 results = requests.get(url_req)
                 return 2
@@ -302,6 +306,11 @@ class Database:
                 self.con.commit()
                 self.cur.execute("UPDATE users SET points=? WHERE telegram_id=?", (p2_points, p2_telegram_id))
                 self.con.commit()
+
+                # send message to player 2
+                message = p1_username + " submitted your code but is a zombie too! Minus 10 points!"
+                url_req = "https://api.telegram.org/bot" + token + "/sendMessage" + "?chat_id=" + str(p2_telegram_id) + "&text=" + message 
+                results = requests.get(url_req)
 
                 return 4
 

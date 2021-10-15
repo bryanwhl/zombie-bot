@@ -6,7 +6,7 @@ from database import Database
 import initialization
 
 db = Database()
-# db.create_tables()
+db.create_tables()
 
 def welcome_message(update, context):
     chat_id = update.message.chat.id    
@@ -27,7 +27,20 @@ def main():
 
     dp.add_handler(
         ConversationHandler(
-            entry_points=[CommandHandler("signup", initialization.start)],
+            entry_points=[CommandHandler("signup", partial(initialization.start, db=db))],
+            states={
+                1: [MessageHandler(Filters.text, partial(initialization.get_name, db=db))],
+                2: [MessageHandler(Filters.text, partial(initialization.get_player, db=db))],
+                3: [MessageHandler(Filters.text, partial(initialization.get_house, db=db))],
+            },
+            fallbacks=[],
+            per_user=False
+        )
+    )
+
+    dp.add_handler(
+        ConversationHandler(
+            entry_points=[CommandHandler("editinfo", partial(initialization.start, db=db))],
             states={
                 1: [MessageHandler(Filters.text, partial(initialization.get_name, db=db))],
                 2: [MessageHandler(Filters.text, partial(initialization.get_player, db=db))],
