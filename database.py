@@ -161,10 +161,10 @@ class Database:
             print(e)
             return e
 
-    def delete_user(self, full_name):
+    def delete_user(self, telegram_id):
         try:
             self.cur.execute(
-                "DELETE FROM users WHERE full_name=?", (full_name,))
+                "DELETE FROM users WHERE telegram_id=?", (telegram_id,))
             self.con.commit()
 
         except Exception as e:

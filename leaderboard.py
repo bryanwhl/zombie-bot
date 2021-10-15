@@ -11,7 +11,7 @@ def show_leaderboard(update, context, db):
     number_humans = db.query_number_humans()
     number_zombies = db.query_number_zombies()
     top_10_names = db.query_top_usernames(NUMBER_LEADERBOARD)
-    text = "Following are the leaderboard:\n\nHumans v.s. Zombies \nHumans: " + str(number_humans) +  "\nZombies: " + str(number_zombies) +  "\n\nTop 10 players:\n"
+    text = "Following are the leaderboard:\n\nHumans v.s. Zombies: \nHumans: " + str(number_humans) +  "\nZombies: " + str(number_zombies) +  "\n\nTop 10 players:\n"
 
     for idx, val in enumerate(top_10_names):
         text += str(idx+1) + ". " + val + "\n"

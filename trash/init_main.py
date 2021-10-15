@@ -4,6 +4,7 @@ from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ParseMode, Repl
 from functools import partial
 from database import Database
 import initialization
+import editinfo
 
 db = Database()
 db.create_tables()
@@ -40,11 +41,11 @@ def main():
 
     dp.add_handler(
         ConversationHandler(
-            entry_points=[CommandHandler("editinfo", partial(initialization.start, db=db))],
+            entry_points=[CommandHandler("editinfo", partial(editinfo.start, db=db))],
             states={
-                1: [MessageHandler(Filters.text, partial(initialization.get_name, db=db))],
-                2: [MessageHandler(Filters.text, partial(initialization.get_player, db=db))],
-                3: [MessageHandler(Filters.text, partial(initialization.get_house, db=db))],
+                1: [MessageHandler(Filters.text, partial(editinfo.get_name, db=db))],
+                2: [MessageHandler(Filters.text, partial(editinfo.get_player, db=db))],
+                3: [MessageHandler(Filters.text, partial(editinfo.get_house, db=db))],
             },
             fallbacks=[],
             per_user=False

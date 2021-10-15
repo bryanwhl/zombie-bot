@@ -10,22 +10,21 @@ def start(update, context, db):
     context.user_data["telegram_handle"] = username
 
     today = datetime.today()
-    timestart = datetime.strptime("13/10/2021 12:00", "%d/%m/%Y %H:%M")
-    timeend = datetime.strptime("20/10/2021 20:00", "%d/%m/%Y %H:%M")
+    timestart = datetime.strptime("16/10/2021 11:00", "%d/%m/%Y %H:%M")
+    timeend = datetime.strptime("16/10/2021 12:00", "%d/%m/%Y %H:%M")
     if (today < timestart or today > timeend):
-        text = "Signups are closed! Signups are open from 19 Oct, 12pm to 8pm."
+        text = "You only can make changes to your details during signup period!"
         update.message.reply_text(text)
         return ConversationHandler.END
 
-    if (db.telegram_id_exist(chat_id)):
-        update.message.reply_text(text = "Sorry! You have signed up before. Please contact the administrators if this is an error.")
+    if not (db.telegram_id_exist(chat_id)):
+        update.message.reply_text(text = "You have not signed up yet!")
         return ConversationHandler.END
 
-    text = "Hi @" + username + "! Let's get you started!"
-    text2 = "May I know your name (full name on matric card)?"
+    db.delete_user(chat_id)
+    text = "May I know your name (full name on matric card)?"
 
     update.message.reply_text(text)
-    update.message.reply_text(text2)
 
     return 1
 
@@ -94,7 +93,8 @@ def get_house(update, context, db):
 
     text = "Great! Your house, " + house + ", has been registered."
     # text2 = "You have been assigned code: " + code +  "\nThis code will be used for the game."
-    text3 = "Thank you for registering for RC4's Humans Vs Zombies event. These are your details:\n\nFull Name: " + full_name + "\nUsername: " + username + "\nHouse: " + house + "\nCode: " + code + "\nRole: " + role
+    text3 = "Thank you for registering for RC4's Humans Vs Zombies event. These are your details:\n\nFull Name: " + full_name + "\nUsername: " + username + "\nHouse: " + house
+    text3 += "\nPress /editinfo to edit your details."
     text4 = "Sorry, there have been some issues with your registration. Please contact the administrators! Press /start to initialize new details."
 
     if (db.insert_user(full_name, username, house, chat_id, code, is_human, 0, telegram_handle)):

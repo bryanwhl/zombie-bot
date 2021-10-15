@@ -1,6 +1,7 @@
 import Constants as keys
 import keyboards
 import initialization
+import editinfo
 import codesubmit
 import leaderboard
 import instructions
@@ -14,13 +15,23 @@ from datetime import datetime
 from datetime import date
 
 db = Database()
-#db.create_tables()
+db.create_tables()
+
+def welcome_message(update, context):
+    chat_id = update.message.chat.id    
+    username = str(update.message.from_user.username)
+
+    text = "Welcome to the game, " + username + ". Press /signup to begin!"
+
+    update.message.reply_text(text)
+
+    return ConversationHandler.END  
 
 def show_home(update, context):
     chat_id = update.message.chat.id
 
     today = datetime.today()
-    timestart = datetime.strptime("14/10/2021 08:00", "%d/%m/%Y %H:%M")
+    timestart = datetime.strptime("16/10/2021 12:00", "%d/%m/%Y %H:%M")
     if (today < timestart):
         text = "Game have not started! Game only starts on 20 Oct 8am."
         update.message.reply_text(text)
@@ -56,6 +67,34 @@ def show_back_home(update, context):
 def main():
     updater = Updater(keys.API_KEY)
     dp = updater.dispatcher
+
+    dp.add_handler(CommandHandler("start", welcome_message))
+
+    dp.add_handler(
+        ConversationHandler(
+            entry_points=[CommandHandler("signup", partial(initialization.start, db=db))],
+            states={
+                1: [MessageHandler(Filters.text, partial(initialization.get_name, db=db))],
+                2: [MessageHandler(Filters.text, partial(initialization.get_player, db=db))],
+                3: [MessageHandler(Filters.text, partial(initialization.get_house, db=db))],
+            },
+            fallbacks=[],
+            per_user=False
+        )
+    )
+
+    dp.add_handler(
+        ConversationHandler(
+            entry_points=[CommandHandler("editinfo", partial(editinfo.start, db=db))],
+            states={
+                1: [MessageHandler(Filters.text, partial(editinfo.get_name, db=db))],
+                2: [MessageHandler(Filters.text, partial(editinfo.get_player, db=db))],
+                3: [MessageHandler(Filters.text, partial(editinfo.get_house, db=db))],
+            },
+            fallbacks=[],
+            per_user=False
+        )
+    )
 
     # /start
     dp.add_handler(CommandHandler("startgame", show_home))
