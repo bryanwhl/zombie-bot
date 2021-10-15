@@ -36,7 +36,7 @@ def get_table(update, context, db):
         )
         return 1
 
-    text = "Following are the users full name, username, telegram handle, house, role, code, points \n\n"
+    text = "Following are the users full name, username, telegram handle, house, role, code, points: \n\n"
 
     userbase = db.query_all_users()
     for user in userbase:
