@@ -25,7 +25,7 @@ def show_details(update, context, db):
         role = "Zombie"
 
     text = "Following are the your details: \nName: " + user_details[FULL_NAME] + "\nUsername: " + user_details[USERNAME] + "\nHouse: " + user_details[HOUSE] + "\nCode: " + user_details[CODE] + "\nRole: " + role + "\nPoints: " + str(user_details[POINTS])
-    
+    text += "\n\nYou can copy code by pressing /getcode."
     context.bot.edit_message_text(
         chat_id=chat_id,
         message_id=message_id,

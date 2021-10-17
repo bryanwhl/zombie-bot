@@ -4,6 +4,14 @@ import keyboards
 
 NUMBER_LEADERBOARD = 10
 
+FULL_NAME = 0
+USERNAME = 1
+HOUSE = 2
+TELEGRAM_ID = 3
+CODE = 4
+IS_HUMAN = 5
+POINTS = 6
+
 def show_leaderboard(update, context, db):
     query = update.callback_query
     chat_id = query.message.chat_id
@@ -14,7 +22,7 @@ def show_leaderboard(update, context, db):
     text = "Following are the leaderboard:\n\nHumans v.s. Zombies: \nHumans: " + str(number_humans) +  "\nZombies: " + str(number_zombies) +  "\n\nTop 10 players:\n"
 
     for idx, val in enumerate(top_10_names):
-        text += str(idx+1) + ". " + val + "\n"
+        text += str(idx+1) + ". " + val[USERNAME] + ", " + str(val[POINTS]) + "\n"
 
     aquila_points = db.query_house_points("Aquila")
     noctua_points = db.query_house_points("Noctua")

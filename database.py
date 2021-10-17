@@ -356,7 +356,7 @@ class Database:
             if (len(rows) < number):
                 number = len(rows)
             for i in range(number):
-                arrayString.append(rows[i][USERNAME])
+                arrayString.append(rows[i])
             return arrayString
 
         except Exception as e:

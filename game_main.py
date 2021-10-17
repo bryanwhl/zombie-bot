@@ -17,6 +17,14 @@ from datetime import date
 db = Database()
 db.create_tables()
 
+FULL_NAME = 0
+USERNAME = 1
+HOUSE = 2
+TELEGRAM_ID = 3
+CODE = 4
+IS_HUMAN = 5
+POINTS = 6
+
 def welcome_message(update, context):
     chat_id = update.message.chat.id    
     username = str(update.message.from_user.username)
@@ -31,9 +39,9 @@ def show_home(update, context):
     chat_id = update.message.chat.id
 
     today = datetime.today()
-    timestart = datetime.strptime("16/10/2021 12:00", "%d/%m/%Y %H:%M")
+    timestart = datetime.strptime("20/10/2021 19:00", "%d/%m/%Y %H:%M")
     if (today < timestart):
-        text = "Game have not started! Game only starts on 20 Oct 8am."
+        text = "Game have not started! Game only starts on 20 Oct 7pm."
         update.message.reply_text(text)
         return ConversationHandler.END
 
@@ -42,10 +50,18 @@ def show_home(update, context):
         update.message.reply_text(text=text)
         return ConversationHandler.END
 
+    user = db.query_user(chat_id)
+    if (user[IS_HUMAN] == '1'):
+        role = "Human"
+    else:
+        role = "Zombie"
+
     text = "Welcome to the game! Please select an option below:"
+    text2 = "You are a " + role + ". You can get your code by going to \"Account Details\" or pressing /getcode."
     update.message.reply_text(
         text=text, reply_markup=keyboards.main_options_keyboard()
     )
+    update.message.reply_text(text2)
 
 def show_back_home(update, context):
     query = update.callback_query
@@ -61,7 +77,15 @@ def show_back_home(update, context):
         text=text,
         reply_markup=keyboards.main_options_keyboard()
     )
+
+    return ConversationHandler.END
+
+def get_code(update, context):
+    chat_id = update.message.chat.id
+    user = db.query_user(chat_id)
     
+    text = user[CODE]
+    update.message.reply_text(text)
     return ConversationHandler.END
 
 def main():
@@ -119,6 +143,9 @@ def main():
     dp.add_handler(CallbackQueryHandler(partial(accountdetails.show_details, db=db), pattern="account_details"))
 
     dp.add_handler(CallbackQueryHandler(show_back_home, pattern="return_menu"))
+
+    # access code
+    dp.add_handler(CommandHandler("getcode", partial(get_code)))
 
 
     updater.start_polling()

@@ -10,8 +10,8 @@ def start(update, context, db):
     context.user_data["telegram_handle"] = username
 
     today = datetime.today()
-    timestart = datetime.strptime("16/10/2021 11:00", "%d/%m/%Y %H:%M")
-    timeend = datetime.strptime("16/10/2021 12:00", "%d/%m/%Y %H:%M")
+    timestart = datetime.strptime("19/10/2021 12:00", "%d/%m/%Y %H:%M")
+    timeend = datetime.strptime("19/10/2021 20:00", "%d/%m/%Y %H:%M")
     if (today < timestart or today > timeend):
         text = "Signups are closed! Signups are open from 19 Oct, 12pm to 8pm."
         update.message.reply_text(text)
@@ -23,7 +23,7 @@ def start(update, context, db):
 
 
     text = "Hi @" + username + "! Let's get you started!"
-    text2 = "May I know your name (full name on matric card)?"
+    text2 = "May I know your name (full name on matric card, DO NOT include commas)?"
 
     update.message.reply_text(text)
     update.message.reply_text(text2)
@@ -41,10 +41,17 @@ def get_name(update, context, db):
             text = "Sorry, this name has been taken! Please contact the adminstrators if this is an error. Please insert another name."
         )
         return 1
+
+    if "," in user_input:
+        update.message.reply_text(
+            text = "Invalid name! Please retype your full name (with no commas)."
+        )
+        return 1
+
     context.user_data["full_name"] = user_input
 
     text = "Your name " + user_input + " has been registered."
-    text2 = "Please enter an anonymous username you would like to play with! (e.g. troller1234)"
+    text2 = "Please enter an anonymous username you would like to play with (with no commas)! (e.g. troller1234)"
 
     update.message.reply_text(text)
     update.message.reply_text(text2)
@@ -60,6 +67,13 @@ def get_player(update, context, db):
             text = "Sorry, this player's name has already been taken! Please use another player name."
         )
         return 2
+
+    if "," in user_input:
+        update.message.reply_text(
+            text = "Invalid username! Please retype your username (with no commas)."
+        )
+        return 2
+
     context.user_data["username"] = user_input
 
     text = "Your player name, " + \

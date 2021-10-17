@@ -18,9 +18,9 @@ testDatabase.create_tables()
 # Ensuring user table queries work
 ## Insert users
 print("Expected: 3 users printed")
-testDatabase.insert_user("Bryan Imposter", "troller1234", "Leo", "1157634501", "submit_code1", "0", 5, "smallboi")
-testDatabase.insert_user("Bryan Wong Hong Liang", "troller123", "Aquila", "1157634502", "submit_code2", "1", 10, "bryanwhl")
-testDatabase.insert_user("Bryan Leong Hong Liang", "troller12", "Ursa", "1157634503", "submit_code3", "0", 15, "bryanlhl")
+testDatabase.insert_user("Bryan Imposter", "troller1234", "Leo", "1157634500", "submit_code1", "0", 5, "smallboi")
+testDatabase.insert_user("Bryan Wong Hong Liang", "troller123", "Aquila", "1157634501", "submit_code2", "1", 10, "bryanwhl")
+testDatabase.insert_user("Bryan Leong Hong Liang", "troller12", "Ursa", "1157634502", "submit_code3", "0", 15, "bryanlhl")
 print(testDatabase.query_all_users())
 print("==========================")
 
