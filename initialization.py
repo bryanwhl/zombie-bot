@@ -10,7 +10,7 @@ def start(update, context, db):
     context.user_data["telegram_handle"] = username
 
     today = datetime.today()
-    timestart = datetime.strptime("16/10/2021 12:00", "%d/%m/%Y %H:%M")
+    timestart = datetime.strptime("19/10/2021 12:00", "%d/%m/%Y %H:%M")
     timeend = datetime.strptime("19/10/2021 20:00", "%d/%m/%Y %H:%M")
     if (today < timestart or today > timeend):
         text = "Signups are closed! Signups are open from 19 Oct, 12pm to 8pm."

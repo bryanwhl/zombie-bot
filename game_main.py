@@ -39,7 +39,7 @@ def show_home(update, context):
     chat_id = update.message.chat.id
 
     today = datetime.today()
-    timestart = datetime.strptime("16/10/2021 19:00", "%d/%m/%Y %H:%M")
+    timestart = datetime.strptime("20/10/2021 19:00", "%d/%m/%Y %H:%M")
     if (today < timestart):
         text = "Game have not started! Game only starts on 20 Oct 7pm."
         update.message.reply_text(text)
