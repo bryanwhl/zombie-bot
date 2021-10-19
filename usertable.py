@@ -46,6 +46,10 @@ def get_table(update, context, db):
             role = "Zombie"
         text += user[FULL_NAME] + ", " + user[USERNAME] + ", " + user[TELEGRAM_HANDLE] + ", " + user[HOUSE] + ", " + role + ", " + user[CODE] + ", " + str(user[POINTS]) + "\n"
 
-    update.message.reply_text(text)
+    if len(text) > 4096:
+        for x in range(0, len(text), 4096):
+            update.message.reply_text(text[x: x+4096])
+    else:
+        update.message.reply_text(text)
 
     return ConversationHandler.END

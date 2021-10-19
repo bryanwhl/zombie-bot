@@ -15,7 +15,7 @@ from datetime import datetime
 from datetime import date
 
 db = Database()
-db.create_tables()
+# db.create_tables()
 
 FULL_NAME = 0
 USERNAME = 1
